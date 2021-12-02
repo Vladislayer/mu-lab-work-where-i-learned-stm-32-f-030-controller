@@ -1,0 +1,94 @@
+// 
+// Пример проекта для платы 
+// Judchin 
+// 
+ 
+#include "main.h" 
+#include <stm32f0xx.h> 
+ 
+/*******************************************************************/ 
+ 
+void delay1 (void) { 
+ volatile uint16_t i; // volatile - указывает компилятору не оптимизировать переменную 
+ uint16_t d; 
+  
+ d = (GPIOB->IDR & 0xf000) + 1; // задержка определяется микропереключателями, но минальная 1 
+ for (i = d; i > 0; i--); 
+} 
+void init_gpio (void) 
+{ 
+ // Включить тактирование портов А, B 
+ RCC->AHBENR |= RCC_AHBENR_GPIOAEN | RCC_AHBENR_GPIOBEN; 
+ 
+ // инициализация светодиодов (PB.0-PB.7), PB.8 - линия управления светодиодами (все на выход) 
+ GPIOB->MODER |= GPIO_MODER_MODER0_0 | GPIO_MODER_MODER1_0 | GPIO_MODER_MODER2_0 | GPIO_MODER_MODER3_0 | 
+     GPIO_MODER_MODER4_0 | GPIO_MODER_MODER5_0 | GPIO_MODER_MODER6_0 | GPIO_MODER_MODER7_0 | 
+     GPIO_MODER_MODER8_0; 
+  
+ // Гарантированно очищаем PB.12-PB.15 (настройка на вход) 
+ GPIOB->MODER &= ~(GPIO_MODER_MODER12 | GPIO_MODER_MODER13 | GPIO_MODER_MODER14 | GPIO_MODER_MODER15); 
+} 
+void delay ( uint32_t count) 
+{ 
+ volatile uint32_t i; 
+ for (i=0;i<count;i++); 
+} 
+int main(void) 
+{ 
+ 
+ uint32_t j,o; 
+ init_gpio(); 
+ o = 12000000; 
+ GPIOB->ODR = 0x1ff; // включить все светодиоды и разрешить их работу 
+ while(1) { 
+   
+   
+  RCC->AHBENR|=RCC_AHBENR_GPIOBEN; 
+  GPIOB->MODER|=GPIO_MODER_MODER0_0|GPIO_MODER_MODER8_0; 
+  GPIOB->ODR|=0X101; 
+  delay(o); 
+  GPIOB->MODER|=GPIO_MODER_MODER1_0|GPIO_MODER_MODER8_0; 
+  GPIOB->ODR|=0X101; 
+  delay(o); 
+  GPIOB->MODER|=GPIO_MODER_MODER2_0|GPIO_MODER_MODER8_0; 
+  GPIOB->ODR|=0X101; 
+  delay(o); 
+  GPIOB->MODER|=GPIO_MODER_MODER7_0|GPIO_MODER_MODER8_0; 
+  GPIOB->ODR|=0X101; 
+  delay(o); 
+  GPIOB->MODER|=GPIO_MODER_MODER6_0|GPIO_MODER_MODER8_0; 
+  GPIOB->ODR|=0X101; 
+  delay(o); 
+  GPIOB->MODER|=GPIO_MODER_MODER5_0|GPIO_MODER_MODER8_0; 
+  GPIOB->ODR|=0X101; 
+  delay(o); 
+  GPIOB->MODER|=GPIO_MODER_MODER4_0|GPIO_MODER_MODER8_0; 
+  GPIOB->ODR|=0X101; 
+  delay(o); 
+  GPIOB->MODER|=GPIO_MODER_MODER3_0|GPIO_MODER_MODER8_0; 
+  GPIOB->ODR|=0X101; 
+   
+   
+  GPIOB->MODER|=GPIO_MODER_MODER0_0|GPIO_MODER_MODER8_0; 
+  GPIOB->BSRR|=0X10000000; 
+  delay(o); 
+  GPIOB->MODER|=GPIO_MODER_MODER1_0|GPIO_MODER_MODER8_0; 
+  GPIOB->BSRR|=0X10000000; 
+  delay(o); 
+  GPIOB->MODER|=GPIO_MODER_MODER2_0|GPIO_MODER_MODER8_0; 
+  GPIOB->BSRR|=0X10000000; 
+  delay(o); 
+  GPIOB->MODER|=GPIO_MODER_MODER7_0|GPIO_MODER_MODER8_0; 
+  GPIOB->BSRR|=0X10000000; 
+  delay(o); 
+  GPIOB->MODER|=GPIO_MODER_MODER6_0|GPIO_MODER_MODER8_0; 
+  GPIOB->BSRR|=0X10000000; 
+  delay(o); 
+  GPIOB->MODER|=GPIO_MODER_MODER5_0|GPIO_MODER_MODER8_0; 
+  GPIOB->BSRR|=0X10000000; 
+  delay(o); 
+  GPIOB->MODER|=GPIO_MODER_MODER4_0|GPIO_MODER_MODER8_0; 
+  GPIOB->BSRR|=0X10000000; 
+  delay(o); 
+  GPIOB->MODER|=GPIO_MODER_MODER3_0|GPIO_MODER_MODER8_0; 
+  GPIOB->BSRR|=0X10000000;
